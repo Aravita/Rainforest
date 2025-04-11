@@ -35,6 +35,11 @@
 #include <string.h>
 
 /**
+ * Chip capacity in bytes
+ */
+#define L2HAL_LY68L6400_CAPACITY 8388608U
+
+/**
  * SPI-attached pSRAM context, SPI connection, pins etc
  */
 typedef struct

@@ -77,6 +77,9 @@ int main(int argc, char* argv[])
 		HAL_PSRAM_CS_PIN
 	);
 
+	/* Hardware self-test */
+	HAL_HardwareSelfTest();
+
 	// Infinite loop
 	while (true)
 	{

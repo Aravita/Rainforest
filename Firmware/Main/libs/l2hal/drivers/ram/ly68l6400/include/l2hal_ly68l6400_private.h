@@ -37,11 +37,6 @@
 #define L2HAL_LY68L6400_MAX_READ_BYTES 32U
 
 /**
- * Chip capacity in bytes
- */
-#define L2HAL_LY68L6400_CAPACITY 8388608U
-
-/**
  * Select / deselect chip
  */
 void L2HAL_LY68L6400_SelectChip(L2HAL_LY68L6400_ContextStruct *context, bool isSelected);
