@@ -409,7 +409,7 @@ void FMGL_API_DrawRectangle(FMGL_API_DriverContext* context, uint16_t x1, uint16
  * @param x1 One corner X coordinate.
  * @param y1 One corner Y coordinate.
  * @param x2 Opposite corner X coordinate.
- * @param y2 Opposite corner X coordinate.
+ * @param y2 Opposite corner Y coordinate.
  * @param borderColor Border color.
  * @param fillColor Fill color.
  */

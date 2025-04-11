@@ -42,6 +42,7 @@ libs/l2hal/drivers/display/gc9a01/src \
 libs/l2hal/drivers/display/gc9a01_local_framebuffer/src \
 libs/l2hal/drivers/display/ssd1306/src \
 libs/l2hal/drivers/display/ssd1327/src \
+libs/l2hal/drivers/display/ssd1683/src \
 libs/l2hal/drivers/eeprom/24x/src \
 libs/l2hal/drivers/input/buttons/src \
 libs/l2hal/drivers/input/encoders/src \

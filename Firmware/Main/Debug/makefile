@@ -25,6 +25,7 @@ RM := rm -rf
 -include libs/l2hal/drivers/input/encoders/src/subdir.mk
 -include libs/l2hal/drivers/input/buttons/src/subdir.mk
 -include libs/l2hal/drivers/eeprom/24x/src/subdir.mk
+-include libs/l2hal/drivers/display/ssd1683/src/subdir.mk
 -include libs/l2hal/drivers/display/ssd1327/src/subdir.mk
 -include libs/l2hal/drivers/display/ssd1306/src/subdir.mk
 -include libs/l2hal/drivers/display/gc9a01_local_framebuffer/src/subdir.mk

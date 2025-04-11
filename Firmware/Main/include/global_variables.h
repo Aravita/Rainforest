@@ -33,8 +33,31 @@ DMA_HandleTypeDef SPI1TxDmaHandle = { 0 };
 DMA_HandleTypeDef SPI1RxDmaHandle = { 0 };
 
 /**
+ * SPI2 bus handle.
+ */
+SPI_HandleTypeDef SPI2Handle = { 0 };
+
+/**
+ * SPI2 TX DMA handle.
+ */
+DMA_HandleTypeDef SPI2TxDmaHandle = { 0 };
+
+/**
+ * SPI2 RX DMA handle.
+ */
+DMA_HandleTypeDef SPI2RxDmaHandle = { 0 };
+
+/**
  * pSRAM context
  */
 L2HAL_LY68L6400_ContextStruct RamContext;
+
+/* Display context */
+L2HAL_SSD1683_ContextStruct DisplayContext;
+
+/**
+ * FMGL context.
+ */
+FMGL_API_DriverContext FmglContext;
 
 #endif /* INCLUDE_GLOBAL_VARIABLES_H_ */

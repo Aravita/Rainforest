@@ -23,4 +23,10 @@ volatile void DMA2_Stream3_IRQHandler(void);
 /* SPI1 DMA RX complete */
 volatile void DMA2_Stream2_IRQHandler(void);
 
+/* SPI2 DMA TX complete */
+volatile void DMA1_Stream4_IRQHandler(void);
+
+/* SPI2 DMA RX complete */
+volatile void DMA1_Stream3_IRQHandler(void);
+
 #endif /* INCLUDE_INTERRUPTS_H_ */

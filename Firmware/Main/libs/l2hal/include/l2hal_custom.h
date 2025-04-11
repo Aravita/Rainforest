@@ -33,11 +33,19 @@
 #define L2HAL_INCLUDE_L2HAL_CUSTOM_H_
 
 #include "../drivers/ram/ly68l6400/include/l2hal_ly68l6400.h"
+#include "../drivers/display/ssd1683/include/ssd1683.h"
 
 extern SPI_HandleTypeDef SPI1Handle;
 extern DMA_HandleTypeDef SPI1TxDmaHandle;
 extern DMA_HandleTypeDef SPI1RxDmaHandle;
+
+extern SPI_HandleTypeDef SPI2Handle;
+extern DMA_HandleTypeDef SPI2TxDmaHandle;
+extern DMA_HandleTypeDef SPI2RxDmaHandle;
+
 extern L2HAL_LY68L6400_ContextStruct RamContext;
+
+extern L2HAL_SSD1683_ContextStruct DisplayContext;
 
 /**
  * Put custom hardware initialization stuff here,
@@ -48,6 +56,9 @@ void L2HAL_InitCustomHardware(void);
 void L2HAL_SetupSPI(void);
 void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi);
 void HAL_SPI_MspDeInit(SPI_HandleTypeDef *hspi);
+
 void L2HAL_PSRAMDmaCompleted(DMA_HandleTypeDef *hdma); /* Called when transmission via PSRAM SPI is completed */
+
+void L2HAL_DisplayDmaCompleted(DMA_HandleTypeDef *hdma); /* Called when transmission via Display SPI is completed */
 
 #endif /* L2HAL_INCLUDE_L2HAL_CUSTOM_H_ */

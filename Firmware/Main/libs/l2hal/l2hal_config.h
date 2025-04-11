@@ -39,6 +39,7 @@
 #include "drivers/input/buttons/include/l2hal_buttons_defaults.h"
 #include "drivers/internal/crc/include/l2hal_crc.h"
 #include "drivers/ram/ly68l6400/include/l2hal_ly68l6400.h"
+#include "drivers/display/ssd1683/include/ssd1683.h"
 
 
 #endif /* L2HAL_L2HAL_CONFIG_H_ */
