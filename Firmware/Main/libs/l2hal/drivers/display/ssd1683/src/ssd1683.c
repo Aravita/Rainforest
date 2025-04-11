@@ -298,15 +298,15 @@ uint16_t L2HAL_SSD1683_GetHeight(void)
  */
 void L2HAL_SSD1683_SetActiveColor(L2HAL_SSD1683_ContextStruct* context, FMGL_API_ColorStruct color)
 {
-	context->ActiveColor = color;
+	context->BinarizedActiveColor = L2HAL_SSD1683_BinarizeColor(color);
 }
 
 /**
  * If color is not fully black will return true
  */
-bool L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color)
+uint8_t L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color)
 {
-	return (0x00 != (color.R | color.G | color.B));
+	return (0x00 != (color.R | color.G | color.B)) ? 0xFF : 0x00;
 }
 
 /**
@@ -324,10 +324,8 @@ void L2HAL_SSD1683_SetFramebufferBaseAddress(L2HAL_SSD1683_ContextStruct* contex
  */
 void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
 {
-	uint8_t eightPixels = L2HAL_SSD1683_BinarizeColor(context->ActiveColor) ? 0xFF : 0x00;
-
 	uint8_t line[L2HAL_SSD1683_DISPLAY_LINE_SIZE];
-	memset(line, eightPixels, L2HAL_SSD1683_DISPLAY_LINE_SIZE);
+	memset(line, context->BinarizedActiveColor, L2HAL_SSD1683_DISPLAY_LINE_SIZE);
 
 	for (uint16_t y = 0; y < L2HAL_SSD1683_DISPLAY_HEIGHT; y++)
 	{
@@ -394,9 +392,8 @@ void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, u
 
 	uint8_t mask = (1 << bitNumber);
 	uint8_t antimask = ~(1 << bitNumber);
-	uint8_t newPixel = L2HAL_SSD1683_BinarizeColor(context->ActiveColor) ? 0xFF : 0x00;
 
-	pixel = (pixel & antimask) | (mask & newPixel);
+	pixel = (pixel & antimask) | (mask & context->BinarizedActiveColor);
 
 	context->FramebufferMemoryWriteFunctionPtr
 	(

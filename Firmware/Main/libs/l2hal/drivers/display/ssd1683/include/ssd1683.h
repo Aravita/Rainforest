@@ -56,9 +56,9 @@ typedef struct
 	uint16_t ChipSelectPin;
 
 	/**
-	 * Current drawing color
+	 * Current drawing color. 0x00 - black, 0xFF - white
 	 */
-	FMGL_API_ColorStruct ActiveColor;
+	uint8_t BinarizedActiveColor;
 
 	/**
 	 * If true, then data transfer in progress and we must wait for next one

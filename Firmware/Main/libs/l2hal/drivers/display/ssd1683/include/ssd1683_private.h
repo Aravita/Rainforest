@@ -87,8 +87,8 @@ void L2HAL_SSD1683_Update(L2HAL_SSD1683_ContextStruct *context);
 void L2HAL_SSD1683_WeakUpdate(L2HAL_SSD1683_ContextStruct *context);
 
 /**
- * If color is not fully black will return true
+ * If color is not fully black will return 0xFF, otherwise 0x00
  */
-bool L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color);
+uint8_t L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color);
 
 #endif /* DRIVERS_DISPLAY_SSD1683_INCLUDE_SSD1683_PRIVATE_H_ */
