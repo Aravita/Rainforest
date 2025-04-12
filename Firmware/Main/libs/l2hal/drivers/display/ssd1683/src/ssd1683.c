@@ -310,18 +310,8 @@ void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
 {
-	//uint8_t line[L2HAL_SSD1683_DISPLAY_LINE_SIZE];
-
 	for (uint16_t y = 0; y < L2HAL_SSD1683_DISPLAY_HEIGHT; y ++)
 	{
-		/*context->FramebufferMemoryReadFunctionPtr
-		(
-			context->FramebufferDriverContext,
-			context->FramebufferBaseAddress + y * L2HAL_SSD1683_DISPLAY_LINE_SIZE,
-			L2HAL_SSD1683_DISPLAY_LINE_SIZE,
-			line
-		);*/
-
 		L2HAL_SSD1683_SetPosition(context, 0, y);
 
 		 /* RED */
@@ -341,35 +331,14 @@ void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, uint16_t y)
 {
-	uint32_t address = y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3);
-
-	uint8_t pixel;
-
-	/*context->FramebufferMemoryReadFunctionPtr
-	(
-		context->FramebufferDriverContext,
-		address,
-		1,
-		&pixel
-	);*/
-	pixel = context->Framebuffer[address];
+	uint32_t index = y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3);
 
 	uint8_t bitNumber = 7 - (x % 8);
 
 	uint8_t mask = (1 << bitNumber);
 	uint8_t antimask = ~(1 << bitNumber);
 
-	pixel = (pixel & antimask) | (mask & context->BinarizedActiveColor);
-
-	context->Framebuffer[address] = pixel;
-
-	/*context->FramebufferMemoryWriteFunctionPtr
-	(
-		context->FramebufferDriverContext,
-		address,
-		1,
-		&pixel
-	);*/
+	context->Framebuffer[index] = (context->Framebuffer[index] & antimask) | (mask & context->BinarizedActiveColor);
 }
 
 /**
@@ -377,23 +346,12 @@ void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, u
  */
 FMGL_API_ColorStruct L2HAL_SSD1683_GetPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, uint16_t y)
 {
-	uint32_t address = (y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3));
-
-	uint8_t pixel;
-
-	/*context->FramebufferMemoryReadFunctionPtr
-	(
-		context->FramebufferDriverContext,
-		address,
-		1,
-		&pixel
-	);*/
-	pixel = context->Framebuffer[address];
+	uint32_t index = (y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3));
 
 	uint8_t bitNumber = x % 8;
 
 	FMGL_API_ColorStruct color;
-	if (0 != (pixel & (1 << bitNumber)))
+	if (0 != (context->Framebuffer[index] & (1 << bitNumber)))
 	{
 		color.R = FMGL_API_MAX_CHANNEL_BRIGHTNESS;
 		color.G = FMGL_API_MAX_CHANNEL_BRIGHTNESS;
