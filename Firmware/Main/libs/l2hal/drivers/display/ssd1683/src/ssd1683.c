@@ -350,20 +350,34 @@ FMGL_API_ColorStruct L2HAL_SSD1683_GetPixel(L2HAL_SSD1683_ContextStruct* context
 
 	uint8_t bitNumber = x % 8;
 
-	FMGL_API_ColorStruct color;
-	if (0 != (context->Framebuffer[index] & (1 << bitNumber)))
-	{
-		color.R = FMGL_API_MAX_CHANNEL_BRIGHTNESS;
-		color.G = FMGL_API_MAX_CHANNEL_BRIGHTNESS;
-		color.B = FMGL_API_MAX_CHANNEL_BRIGHTNESS;
-	}
-	else
-	{
-		color.R = 0;
-		color.G = 0;
-		color.B = 0;
-	}
+	return (0 != (context->Framebuffer[index] & (1 << bitNumber))) ? WhiteColor : BlackColor;
 
-	return color;
 }
 
+/**
+ * Save framebuffer to external memory
+ */
+void L2HAL_SSD1683_SaveFramebuffer
+(
+	L2HAL_SSD1683_ContextStruct * context,
+	void* RAMContext,
+	uint32_t saveAddress,
+	void (*FramebufferMemoryWriteFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*)
+)
+{
+	FramebufferMemoryWriteFunctionPtr(RAMContext, saveAddress, L2HAL_SSD1683_FRAMEBUFFER_SIZE, context->Framebuffer);
+}
+
+/**
+ * Load framebuffer from external memory
+ */
+void L2HAL_SSD1683_LoadFramebuffer
+(
+	L2HAL_SSD1683_ContextStruct *context,
+	void* RAMContext,
+	uint32_t loadAddress,
+	void (*FramebufferMemoryReadFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*)
+)
+{
+	FramebufferMemoryReadFunctionPtr(RAMContext, loadAddress, L2HAL_SSD1683_FRAMEBUFFER_SIZE, context->Framebuffer);
+}

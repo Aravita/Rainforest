@@ -15,7 +15,6 @@
  */
 #define L2HAL_SSD1683_CS_TO_RESET 5
 
-
 /**
  * Reset duration
  */
@@ -25,6 +24,22 @@
  * Wait this time after reset before starting to send commands
  */
 #define L2HAL_SSD1683_DISPLAY_BOOT_TIME 120
+
+/* Predefined white color */
+FMGL_API_ColorStruct WhiteColor =
+{
+	.R = FMGL_API_MAX_CHANNEL_BRIGHTNESS,
+	.G = FMGL_API_MAX_CHANNEL_BRIGHTNESS,
+	.B = FMGL_API_MAX_CHANNEL_BRIGHTNESS
+};
+
+/* Predefined black color */
+FMGL_API_ColorStruct BlackColor =
+{
+	.R = 0,
+	.G = 0,
+	.B = 0
+};
 
 /**
  * Send reset signal to display
