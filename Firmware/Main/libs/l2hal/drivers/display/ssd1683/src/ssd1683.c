@@ -23,15 +23,7 @@ void L2HAL_SSD1683_Init
 	uint16_t dataCommandPin,
 
 	GPIO_TypeDef* chipSelectPort,
-	uint16_t chipSelectPin,
-
-	void* framebufferDriverContext,
-
-	void (*framebufferMemoryWriteFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*),
-
-	void (*framebufferMemoryReadFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*),
-
-	uint32_t framebufferBaseAddress
+	uint16_t chipSelectPin
 )
 {
 	context->SPIHandle = spiHandle;
@@ -49,11 +41,6 @@ void L2HAL_SSD1683_Init
 	context->ChipSelectPin = chipSelectPin;
 
 	context->IsDataTransferInProgress = true;
-
-	context->FramebufferDriverContext = framebufferDriverContext;
-	context->FramebufferMemoryWriteFunctionPtr = framebufferMemoryWriteFunctionPtr;
-	context->FramebufferMemoryReadFunctionPtr = framebufferMemoryReadFunctionPtr;
-	context->FramebufferBaseAddress = framebufferBaseAddress;
 
 	L2HAL_SSD1683_ResetDisplay(context);
 
@@ -310,34 +297,11 @@ uint8_t L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color)
 }
 
 /**
- * Set framebuffer base address (in external RAM). Allows to have multiple framebuffers
- */
-void L2HAL_SSD1683_SetFramebufferBaseAddress(L2HAL_SSD1683_ContextStruct* context, uint32_t baseAddress)
-{
-	context->FramebufferBaseAddress = baseAddress;
-	L2HAL_SSD1683_PushFramebuffer(context);
-	L2HAL_SSD1683_Update(context);
-}
-
-/**
  * Fill framebuffer with active color
  */
 void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
 {
-	uint8_t line[L2HAL_SSD1683_DISPLAY_LINE_SIZE];
-	memset(line, context->BinarizedActiveColor, L2HAL_SSD1683_DISPLAY_LINE_SIZE);
-
-	for (uint16_t y = 0; y < L2HAL_SSD1683_DISPLAY_HEIGHT; y++)
-	{
-		context->FramebufferMemoryWriteFunctionPtr
-		(
-			context->FramebufferDriverContext,
-			context->FramebufferBaseAddress + y * L2HAL_SSD1683_DISPLAY_LINE_SIZE,
-			L2HAL_SSD1683_DISPLAY_LINE_SIZE,
-			line
-		);
-	}
-
+	memset(context->Framebuffer, context->BinarizedActiveColor, L2HAL_SSD1683_FRAMEBUFFER_SIZE);
 	L2HAL_SSD1683_PushFramebuffer(context);
 }
 
@@ -346,26 +310,27 @@ void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
 {
-	uint8_t line[L2HAL_SSD1683_DISPLAY_LINE_SIZE];
+	//uint8_t line[L2HAL_SSD1683_DISPLAY_LINE_SIZE];
+
 	for (uint16_t y = 0; y < L2HAL_SSD1683_DISPLAY_HEIGHT; y ++)
 	{
-		context->FramebufferMemoryReadFunctionPtr
+		/*context->FramebufferMemoryReadFunctionPtr
 		(
 			context->FramebufferDriverContext,
 			context->FramebufferBaseAddress + y * L2HAL_SSD1683_DISPLAY_LINE_SIZE,
 			L2HAL_SSD1683_DISPLAY_LINE_SIZE,
 			line
-		);
+		);*/
 
 		L2HAL_SSD1683_SetPosition(context, 0, y);
 
 		 /* RED */
 		L2HAL_SSD1683_WriteCommand(context, 0x26);
-		L2HAL_SSD1683_WriteData(context, line, L2HAL_SSD1683_DISPLAY_LINE_SIZE);
+		L2HAL_SSD1683_WriteData(context, &context->Framebuffer[y * L2HAL_SSD1683_DISPLAY_LINE_SIZE], L2HAL_SSD1683_DISPLAY_LINE_SIZE);
 
 		/* Black */
 		L2HAL_SSD1683_WriteCommand(context, 0x24);
-		L2HAL_SSD1683_WriteData(context, line, L2HAL_SSD1683_DISPLAY_LINE_SIZE);
+		L2HAL_SSD1683_WriteData(context, &context->Framebuffer[y * L2HAL_SSD1683_DISPLAY_LINE_SIZE], L2HAL_SSD1683_DISPLAY_LINE_SIZE);
 	}
 
 	L2HAL_SSD1683_Update(context);
@@ -376,17 +341,18 @@ void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, uint16_t y)
 {
-	uint32_t address = context->FramebufferBaseAddress + (y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3));
+	uint32_t address = y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3);
 
 	uint8_t pixel;
 
-	context->FramebufferMemoryReadFunctionPtr
+	/*context->FramebufferMemoryReadFunctionPtr
 	(
 		context->FramebufferDriverContext,
 		address,
 		1,
 		&pixel
-	);
+	);*/
+	pixel = context->Framebuffer[address];
 
 	uint8_t bitNumber = 7 - (x % 8);
 
@@ -395,13 +361,15 @@ void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, u
 
 	pixel = (pixel & antimask) | (mask & context->BinarizedActiveColor);
 
-	context->FramebufferMemoryWriteFunctionPtr
+	context->Framebuffer[address] = pixel;
+
+	/*context->FramebufferMemoryWriteFunctionPtr
 	(
 		context->FramebufferDriverContext,
 		address,
 		1,
 		&pixel
-	);
+	);*/
 }
 
 /**
@@ -409,17 +377,18 @@ void L2HAL_SSD1683_DrawPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, u
  */
 FMGL_API_ColorStruct L2HAL_SSD1683_GetPixel(L2HAL_SSD1683_ContextStruct* context, uint16_t x, uint16_t y)
 {
-	uint32_t address = context->FramebufferBaseAddress + (y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3));
+	uint32_t address = (y * L2HAL_SSD1683_DISPLAY_LINE_SIZE + (x >> 3));
 
 	uint8_t pixel;
 
-	context->FramebufferMemoryReadFunctionPtr
+	/*context->FramebufferMemoryReadFunctionPtr
 	(
 		context->FramebufferDriverContext,
 		address,
 		1,
 		&pixel
-	);
+	);*/
+	pixel = context->Framebuffer[address];
 
 	uint8_t bitNumber = x % 8;
 

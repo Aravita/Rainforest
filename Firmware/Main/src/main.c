@@ -1347,13 +1347,7 @@ int main(int argc, char* argv[])
 		HAL_DISPLAY_DC_PIN,
 
 		HAL_DISPLAY_CS_PORT,
-		HAL_DISPLAY_CS_PIN,
-
-		&RamContext,
-		(void (*)(void*, uint32_t, uint32_t, uint8_t*))L2HAL_LY68L6400_MemoryWrite,
-		(void (*)(void*, uint32_t, uint32_t, uint8_t*))L2HAL_LY68L6400_MemoryRead,
-
-		0x00 // Framebuffer base address
+		HAL_DISPLAY_CS_PIN
 	);
 
 	/* Hardware self-test */

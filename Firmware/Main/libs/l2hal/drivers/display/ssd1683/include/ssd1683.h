@@ -66,32 +66,9 @@ typedef struct
 	volatile bool IsDataTransferInProgress;
 
 	/**
-	 * Framebuffer driver context pointer (usually it will be RAM-driver context)
+	 * Local framebuffer
 	 */
-	void* FramebufferDriverContext;
-
-	/**
-	 * Pointer to function, writing to framebuffer.
-	 * 1st param - pointer to framebuffer driver context (NOT to display driver context)
-	 * 2nd param - write start address
-	 * 3rd param - write length
-	 * 4rd param - pointer to buffer with data to write
-	 */
-	void (*FramebufferMemoryWriteFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*);
-
-	/**
-	 * Pointer to function, reading from framebuffer.
-	 * 1st param - pointer to framebuffer driver context (NOT to display driver context)
-	 * 2nd param - read start address
-	 * 3rd param - read length
-	 * 4rd param - pointer to buffer where data will be readed
-	 */
-	void (*FramebufferMemoryReadFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*);
-
-	/**
-	 * Framebuffer base address
-	 */
-	uint32_t FramebufferBaseAddress;
+	uint8_t Framebuffer[L2HAL_SSD1683_FRAMEBUFFER_SIZE];
 }
 L2HAL_SSD1683_ContextStruct;
 
@@ -113,15 +90,7 @@ void L2HAL_SSD1683_Init
 	uint16_t dataCommandPin,
 
 	GPIO_TypeDef* chipSelectPort,
-	uint16_t chipSelectPin,
-
-	void* framebufferDriverContext,
-
-	void (*framebufferMemoryWriteFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*),
-
-	void (*framebufferMemoryReadFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*),
-
-	uint32_t framebufferBaseAddress
+	uint16_t chipSelectPin
 );
 
 /**
@@ -138,11 +107,6 @@ uint16_t L2HAL_SSD1683_GetHeight(void);
  * Set color what will be used for drawing.
  */
 void L2HAL_SSD1683_SetActiveColor(L2HAL_SSD1683_ContextStruct* context, FMGL_API_ColorStruct color);
-
-/**
- * Set framebuffer base address (in external RAM). Allows to have multiple framebuffers
- */
-void L2HAL_SSD1683_SetFramebufferBaseAddress(L2HAL_SSD1683_ContextStruct* context, uint32_t baseAddress);
 
 /**
  * Draw pixel
