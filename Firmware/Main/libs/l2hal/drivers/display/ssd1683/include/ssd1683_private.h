@@ -104,11 +104,21 @@ void L2HAL_SSD1683_Update(L2HAL_SSD1683_ContextStruct *context);
 /**
  * Update display partially (not spatial, but "weak update")
  */
-void L2HAL_SSD1683_WeakUpdate(L2HAL_SSD1683_ContextStruct *context);
+void L2HAL_SSD1683_PartialUpdate(L2HAL_SSD1683_ContextStruct *context);
 
 /**
  * If color is not fully black will return 0xFF, otherwise 0x00
  */
 uint8_t L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color);
+
+/**
+* Push framebuffer with given command (internal use only)
+*/
+void L2HAL_SSD1683_PushFramebufferInternal(L2HAL_SSD1683_ContextStruct* context, uint8_t command);
+
+/**
+ * Power display on
+ */
+void L2HAL_SSD1683_PowerOn(L2HAL_SSD1683_ContextStruct *context);
 
 #endif /* DRIVERS_DISPLAY_SSD1683_INCLUDE_SSD1683_PRIVATE_H_ */

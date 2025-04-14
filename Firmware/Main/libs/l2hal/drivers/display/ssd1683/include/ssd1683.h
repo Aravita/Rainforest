@@ -90,7 +90,9 @@ void L2HAL_SSD1683_Init
 	uint16_t dataCommandPin,
 
 	GPIO_TypeDef* chipSelectPort,
-	uint16_t chipSelectPin
+	uint16_t chipSelectPin,
+
+	FMGL_API_ColorStruct initColor
 );
 
 /**
@@ -121,12 +123,12 @@ FMGL_API_ColorStruct L2HAL_SSD1683_GetPixel(L2HAL_SSD1683_ContextStruct* context
 /**
  * Fill framebuffer with active color
  */
-void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context);
+void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context, FMGL_API_ColorStruct clearColor);
 
 /**
- * Push framebuffer to display
+ * Push framebuffer to display (full update)
  */
-void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context);
+void L2HAL_SSD1683_PushFramebufferFull(L2HAL_SSD1683_ContextStruct* context);
 
 /**
  * Push framebuffer to display (partial update)
@@ -159,5 +161,15 @@ void L2HAL_SSD1683_LoadFramebuffer
 	uint32_t loadAddress,
 	void (*FramebufferMemoryReadFunctionPtr)(void*, uint32_t, uint32_t, uint8_t*)
 );
+
+/**
+ * Power display off. Use L2HAL_SSD1683_Init() to power it on back
+ */
+void L2HAL_SSD1683_PowerOff(L2HAL_SSD1683_ContextStruct *context);
+
+/**
+ * Power display off and enter deepsleep mode. Use L2HAL_SSD1683_Init() to power it on back
+ */
+void L2HAL_SSD1683_EnterDeepSleep(L2HAL_SSD1683_ContextStruct *context, bool isRetainRam);
 
 #endif /* DRIVERS_DISPLAY_SSD1683_INCLUDE_SSD1683_H_ */

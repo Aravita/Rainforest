@@ -23,7 +23,9 @@ void L2HAL_SSD1683_Init
 	uint16_t dataCommandPin,
 
 	GPIO_TypeDef* chipSelectPort,
-	uint16_t chipSelectPin
+	uint16_t chipSelectPin,
+
+	FMGL_API_ColorStruct initColor
 )
 {
 	context->SPIHandle = spiHandle;
@@ -66,12 +68,16 @@ void L2HAL_SSD1683_Init
 	L2HAL_SSD1683_WriteCommand(context, 0x11); /* Data entry mode */
 	L2HAL_SSD1683_WriteDataByte(context, 0x03); /* X-mode */
 
+	/* Power on */
+	L2HAL_SSD1683_PowerOn(context);
+
 	/* Initial position */
 	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
 	L2HAL_SSD1683_SetPosition(context, 0, 0);
 
-	/* Power on */
-	L2HAL_SSD1683_PowerOn(context);
+	/* Cleanup */
+	L2HAL_SSD1683_ClearFramebuffer(context, initColor);
+	L2HAL_SSD1683_PushFramebufferFull(context);
 }
 
 void L2HAL_SSD1683_ResetDisplay(L2HAL_SSD1683_ContextStruct *context)
@@ -139,31 +145,6 @@ void L2HAL_SSD1683_WriteCommand(L2HAL_SSD1683_ContextStruct *context, uint8_t co
 	L2HAL_SSD1683_WaitForDataTransferCompletion(context);
 
 	L2HAL_SSD1683_SelectChip(context, false);
-
-	L2HAL_SSD1683_WaitForReadiness(context);
-}
-
-/**
- * Write 1 byte of data
- */
-void L2HAL_SSD1683_WriteDataByte(L2HAL_SSD1683_ContextStruct *context, uint8_t data)
-{
-	context->IsDataTransferInProgress = true;
-
-	HAL_GPIO_WritePin(context->DataCommandPort, context->DataCommandPin, GPIO_PIN_SET); /* 1 - Data */
-
-	L2HAL_SSD1683_SelectChip(context, true);
-
-	if (HAL_SPI_Transmit_DMA(context->SPIHandle, &data, 1) != HAL_OK)
-	{
-		L2HAL_Error(Generic);
-	}
-
-	L2HAL_SSD1683_WaitForDataTransferCompletion(context);
-
-	L2HAL_SSD1683_SelectChip(context, false);
-
-	L2HAL_SSD1683_WaitForReadiness(context);
 }
 
 /**
@@ -185,18 +166,14 @@ void L2HAL_SSD1683_WriteData(L2HAL_SSD1683_ContextStruct *context, uint8_t *data
 	L2HAL_SSD1683_WaitForDataTransferCompletion(context);
 
 	L2HAL_SSD1683_SelectChip(context, false);
-
-	L2HAL_SSD1683_WaitForReadiness(context);
 }
 
-void L2HAL_SSD1683_PowerOn(L2HAL_SSD1683_ContextStruct *context)
+/**
+ * Write 1 byte of data
+ */
+void L2HAL_SSD1683_WriteDataByte(L2HAL_SSD1683_ContextStruct *context, uint8_t data)
 {
-	L2HAL_SSD1683_WriteCommand(context, 0x22); /* Display update control */
-	L2HAL_SSD1683_WriteDataByte(context, 0xE0);
-
-	L2HAL_SSD1683_WriteCommand(context, 0x20); /* Activate display update sequence */
-
-	L2HAL_SSD1683_WaitForReadiness(context);
+	L2HAL_SSD1683_WriteData(context, &data, 1);
 }
 
 /**
@@ -248,7 +225,7 @@ void L2HAL_SSD1683_Update(L2HAL_SSD1683_ContextStruct *context)
 /**
  * Update display partially (not spatial, but "weak update")
  */
-void L2HAL_SSD1683_WeakUpdate(L2HAL_SSD1683_ContextStruct *context)
+void L2HAL_SSD1683_PartialUpdate(L2HAL_SSD1683_ContextStruct *context)
 {
 	L2HAL_SSD1683_WriteCommand(context, 0x22);
 	L2HAL_SSD1683_WriteDataByte(context, 0xFF);
@@ -293,24 +270,18 @@ uint8_t L2HAL_SSD1683_BinarizeColor(FMGL_API_ColorStruct color)
 /**
  * Fill framebuffer with active color
  */
-void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
+void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context, FMGL_API_ColorStruct clearColor)
 {
-	memset(context->Framebuffer, context->BinarizedActiveColor, L2HAL_SSD1683_FRAMEBUFFER_SIZE);
-	L2HAL_SSD1683_PushFramebuffer(context);
+	memset(context->Framebuffer, L2HAL_SSD1683_BinarizeColor(clearColor), L2HAL_SSD1683_FRAMEBUFFER_SIZE);
 }
 
 /**
  * Push framebuffer to display
  */
-void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
+void L2HAL_SSD1683_PushFramebufferFull(L2HAL_SSD1683_ContextStruct* context)
 {
-	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
-	L2HAL_SSD1683_WriteCommand(context, 0x26);
-	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
-
-	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
-	L2HAL_SSD1683_WriteCommand(context, 0x24);
-	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_PushFramebufferInternal(context, 0x26);
+	L2HAL_SSD1683_PushFramebufferInternal(context, 0x24);
 
 	L2HAL_SSD1683_Update(context);
 }
@@ -320,11 +291,19 @@ void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_PushFramebufferPartial(L2HAL_SSD1683_ContextStruct* context)
 {
-	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
-	L2HAL_SSD1683_WriteCommand(context, 0x24);
-	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_PushFramebufferInternal(context, 0x24);
 
-	L2HAL_SSD1683_WeakUpdate(context);
+	L2HAL_SSD1683_PartialUpdate(context);
+}
+
+/**
+* Push framebuffer with given command (internal use only)
+*/
+void L2HAL_SSD1683_PushFramebufferInternal(L2HAL_SSD1683_ContextStruct* context, uint8_t command)
+{
+	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_WriteCommand(context, command);
+	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
 }
 
 /**
@@ -381,4 +360,39 @@ void L2HAL_SSD1683_LoadFramebuffer
 )
 {
 	FramebufferMemoryReadFunctionPtr(RAMContext, loadAddress, L2HAL_SSD1683_FRAMEBUFFER_SIZE, context->Framebuffer);
+}
+
+/**
+ * Power display on
+ */
+void L2HAL_SSD1683_PowerOn(L2HAL_SSD1683_ContextStruct *context)
+{
+	L2HAL_SSD1683_WriteCommand(context, 0x22);
+	L2HAL_SSD1683_WriteDataByte(context, 0xE0);
+	L2HAL_SSD1683_WriteCommand(context, 0x20);
+
+	L2HAL_SSD1683_WaitForReadiness(context);
+}
+
+/**
+ * Power display off. Use L2HAL_SSD1683_Init() to power it on back
+ */
+void L2HAL_SSD1683_PowerOff(L2HAL_SSD1683_ContextStruct *context)
+{
+	L2HAL_SSD1683_WriteCommand(context, 0x22);
+	L2HAL_SSD1683_WriteDataByte(context, 0x83);
+	L2HAL_SSD1683_WriteDataByte(context, 0x20);
+
+	L2HAL_SSD1683_WaitForReadiness(context);
+}
+
+/**
+ * Power display off and enter deepsleep mode. Use L2HAL_SSD1683_Init() to power it on back
+ */
+void L2HAL_SSD1683_EnterDeepSleep(L2HAL_SSD1683_ContextStruct *context, bool isRetainRam)
+{
+	L2HAL_SSD1683_PowerOff(context);
+
+	L2HAL_SSD1683_WriteCommand(context, 0x10);
+	L2HAL_SSD1683_WriteDataByte(context, isRetainRam ? 0x01 : 0x03);
 }
