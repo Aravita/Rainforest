@@ -88,10 +88,10 @@ void HAL_SetInfoLedState(bool isLit)
 
 void HAL_HardwareSelfTest(void)
 {
-	//HAL_SelfTestPSRAM();
+	HAL_PSRAMSelfTest();
 }
 
-void HAL_SelfTestPSRAM(void)
+void HAL_PSRAMSelfTest(void)
 {
 	uint8_t writeBuffer[HAL_PSRAM_TEST_BUFFER_SIZE];
 	for (uint16_t i = 0; i < HAL_PSRAM_TEST_BUFFER_SIZE; i++)

@@ -41,7 +41,7 @@ void L2HAL_SetupSPI(void)
 	SPI1Handle.Init.Mode = SPI_MODE_MASTER;
 	SPI1Handle.Init.Direction = SPI_DIRECTION_2LINES;
 	SPI1Handle.Init.DataSize =  SPI_DATASIZE_8BIT;
-	SPI1Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+	SPI1Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
 	SPI1Handle.Init.CLKPhase = SPI_PHASE_1EDGE;
 	SPI1Handle.Init.CLKPolarity = SPI_POLARITY_LOW;
 	SPI1Handle.Init.FirstBit = SPI_FIRSTBIT_MSB;

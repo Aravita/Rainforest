@@ -69,6 +69,6 @@ void HAL_HardwareSelfTest(void);
 /**
  * Test attached PSRAM
  */
-void HAL_SelfTestPSRAM(void);
+void HAL_PSRAMSelfTest(void);
 
 #endif /* INCLUDE_HAL_H_ */
