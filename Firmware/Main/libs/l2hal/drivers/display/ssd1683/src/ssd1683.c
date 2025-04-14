@@ -70,8 +70,6 @@ void L2HAL_SSD1683_Init
 	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
 	L2HAL_SSD1683_SetPosition(context, 0, 0);
 
-	L2HAL_SSD1683_PushFramebuffer(context);
-
 	/* Power on */
 	L2HAL_SSD1683_PowerOn(context);
 }

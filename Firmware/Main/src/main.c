@@ -55,6 +55,10 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
+/* Colors */
+FMGL_API_ColorStruct OffColor = { .R = FMGL_API_MAX_CHANNEL_BRIGHTNESS, .G = FMGL_API_MAX_CHANNEL_BRIGHTNESS, .B = FMGL_API_MAX_CHANNEL_BRIGHTNESS };
+FMGL_API_ColorStruct OnColor = { .R = 0x00, .G = 0x00, .B = 0x00 };
+
 int main(int argc, char* argv[])
 {
 	// At this stage the system clock should have already been configured
@@ -100,15 +104,7 @@ int main(int argc, char* argv[])
 	HAL_HardwareSelfTest();
 
 	/* FMGL initialization */
-	FMGL_API_ColorStruct OffColor;
-	OffColor.R = 0xFF;
-	OffColor.G = 0xFF;
-	OffColor.B = 0xFF;
 
-	FMGL_API_ColorStruct OnColor;
-	OnColor.R = 0x00;
-	OnColor.G = 0x00;
-	OnColor.B = 0x00;
 
 	/* Display clean */
 	L2HAL_SSD1683_SetActiveColor(&DisplayContext, OffColor);
@@ -150,17 +146,11 @@ int main(int argc, char* argv[])
 	// Saving framebuffer 1
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 0, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
-	//FMGL_API_SetActiveColor(&FmglContext, OffColor);
-	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext);
-
 
 	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, "4.2 \xC4\xC0\xCA\xCD\xCF\xD7\xD9\xCA E-Ink \xC4\xC9\xD3\xD0\xCC\xC5\xCA, \xCB\xC1\xC4\xD2 2");
 
 	// Saving framebuffer 2
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 100000, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
-
-	//FMGL_API_DrawRectangleFilled(&FmglContext, 100, 100, 150, 150, OnColor, OnColor);
-	//FMGL_API_PushFramebuffer(&FmglContext);
 
 	// Infinite loop
 	uint32_t baseAddress = 0;
