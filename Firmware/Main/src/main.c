@@ -123,7 +123,7 @@ int main(int argc, char* argv[])
 		(void (*) (void* deviceContext, FMGL_API_ColorStruct color))&L2HAL_SSD1683_SetActiveColor,
 		(void (*) (void* deviceContext, uint16_t x, uint16_t y))&L2HAL_SSD1683_DrawPixel,
 		(FMGL_API_ColorStruct (*) (void* deviceContext, uint16_t x, uint16_t y))&L2HAL_SSD1683_GetPixel,
-		(void (*) (void* deviceContext))&L2HAL_SSD1683_PushFramebuffer,
+		(void (*) (void* deviceContext))&L2HAL_SSD1683_PushFramebufferPartial,
 		OffColor
 	);
 
@@ -145,12 +145,13 @@ int main(int argc, char* argv[])
 	uint16_t height;
 
 	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, "4.2 \xC4\xC0\xCA\xCD\xCF\xD7\xD9\xCA E-Ink \xC4\xC9\xD3\xD0\xCC\xC5\xCA, \xCB\xC1\xC4\xD2 1");
+	FMGL_API_PushFramebuffer(&FmglContext);
 
 	// Saving framebuffer 1
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 0, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
-	FMGL_API_SetActiveColor(&FmglContext, OffColor);
-	L2HAL_SSD1683_ClearFramebuffer(&DisplayContext);
+	//FMGL_API_SetActiveColor(&FmglContext, OffColor);
+	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext);
 
 
 	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, "4.2 \xC4\xC0\xCA\xCD\xCF\xD7\xD9\xCA E-Ink \xC4\xC9\xD3\xD0\xCC\xC5\xCA, \xCB\xC1\xC4\xD2 2");
@@ -158,6 +159,8 @@ int main(int argc, char* argv[])
 	// Saving framebuffer 2
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 100000, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
+	//FMGL_API_DrawRectangleFilled(&FmglContext, 100, 100, 150, 150, OnColor, OnColor);
+	//FMGL_API_PushFramebuffer(&FmglContext);
 
 	// Infinite loop
 	uint32_t baseAddress = 0;

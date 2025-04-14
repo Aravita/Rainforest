@@ -72,6 +72,11 @@ void L2HAL_SSD1683_WaitForDataTransferCompletion(L2HAL_SSD1683_ContextStruct *co
 void L2HAL_SSD1683_WriteCommand(L2HAL_SSD1683_ContextStruct *context, uint8_t command);
 
 /**
+ * Write 1 byte of data
+ */
+void L2HAL_SSD1683_WriteDataByte(L2HAL_SSD1683_ContextStruct *context, uint8_t data);
+
+/**
  * Write data to display
  */
 void L2HAL_SSD1683_WriteData(L2HAL_SSD1683_ContextStruct *context, uint8_t *data, uint16_t dataSize);
@@ -89,7 +94,7 @@ void L2HAL_SSD1683_SetPosition(L2HAL_SSD1683_ContextStruct *context, uint16_t x,
 /**
  * Set addresses range
  */
-void L2HAL_SSD1683_SetRange(L2HAL_SSD1683_ContextStruct *context, uint16_t xStart,uint16_t yStart,uint16_t xEnd,uint16_t yEnd);
+void L2HAL_SSD1683_SetRange(L2HAL_SSD1683_ContextStruct *context, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
 /**
  * Update display

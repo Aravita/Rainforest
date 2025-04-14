@@ -129,6 +129,11 @@ void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context);
 void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context);
 
 /**
+ * Push framebuffer to display (partial update)
+ */
+void L2HAL_SSD1683_PushFramebufferPartial(L2HAL_SSD1683_ContextStruct* context);
+
+/**
  * Mark transfer as completed (call it from DMA IRQ)
  */
 void L2HAL_SSD1683_MarkDataTransferAsCompleted(L2HAL_SSD1683_ContextStruct *context);

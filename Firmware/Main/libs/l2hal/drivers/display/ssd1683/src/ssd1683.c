@@ -50,38 +50,27 @@ void L2HAL_SSD1683_Init
 	HAL_Delay(L2HAL_SSD1683_DISPLAY_BOOT_TIME);
 	L2HAL_SSD1683_WaitForReadiness(context);
 
-	uint8_t byteData;
+	L2HAL_SSD1683_WriteCommand(context, 0x01); /* Set MUX as 300 */
+	L2HAL_SSD1683_WriteDataByte(context, 0x2B);
+	L2HAL_SSD1683_WriteDataByte(context, 0x01);
+	L2HAL_SSD1683_WriteDataByte(context, 0x00);
 
-	L2HAL_SSD1683_WriteCommand(context, 0x21); /* Display Update Control */
-	byteData = 0x40;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-	byteData = 0x00;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	L2HAL_SSD1683_WriteCommand(context, 0x01);  /* Set MUX as 300 */
-	byteData = 0x2B;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-	byteData = 0x01;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-	byteData = 0x00;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x3C); /* Border waveform */
-	byteData = 0x01;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	L2HAL_SSD1683_WriteCommand(context, 0x11); /* Data entry mode */
-	byteData = 0x03; /* X-mode */
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH - 1, L2HAL_SSD1683_DISPLAY_HEIGHT - 1);
+	L2HAL_SSD1683_WriteDataByte(context, 0x01);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x18); /* Read built-in temperature sensor */
-	byteData = 0x80;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, 0x80);
+
+
+	L2HAL_SSD1683_WriteCommand(context, 0x11); /* Data entry mode */
+	L2HAL_SSD1683_WriteDataByte(context, 0x03); /* X-mode */
 
 	/* Initial position */
+	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
 	L2HAL_SSD1683_SetPosition(context, 0, 0);
+
+	L2HAL_SSD1683_PushFramebuffer(context);
 
 	/* Power on */
 	L2HAL_SSD1683_PowerOn(context);
@@ -157,6 +146,29 @@ void L2HAL_SSD1683_WriteCommand(L2HAL_SSD1683_ContextStruct *context, uint8_t co
 }
 
 /**
+ * Write 1 byte of data
+ */
+void L2HAL_SSD1683_WriteDataByte(L2HAL_SSD1683_ContextStruct *context, uint8_t data)
+{
+	context->IsDataTransferInProgress = true;
+
+	HAL_GPIO_WritePin(context->DataCommandPort, context->DataCommandPin, GPIO_PIN_SET); /* 1 - Data */
+
+	L2HAL_SSD1683_SelectChip(context, true);
+
+	if (HAL_SPI_Transmit_DMA(context->SPIHandle, &data, 1) != HAL_OK)
+	{
+		L2HAL_Error(Generic);
+	}
+
+	L2HAL_SSD1683_WaitForDataTransferCompletion(context);
+
+	L2HAL_SSD1683_SelectChip(context, false);
+
+	L2HAL_SSD1683_WaitForReadiness(context);
+}
+
+/**
  * Write data to display
  */
 void L2HAL_SSD1683_WriteData(L2HAL_SSD1683_ContextStruct *context, uint8_t *data, uint16_t dataSize)
@@ -181,11 +193,8 @@ void L2HAL_SSD1683_WriteData(L2HAL_SSD1683_ContextStruct *context, uint8_t *data
 
 void L2HAL_SSD1683_PowerOn(L2HAL_SSD1683_ContextStruct *context)
 {
-	uint8_t byteData;
-
 	L2HAL_SSD1683_WriteCommand(context, 0x22); /* Display update control */
-	byteData = 0xe0;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, 0xE0);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x20); /* Activate display update sequence */
 
@@ -197,51 +206,41 @@ void L2HAL_SSD1683_PowerOn(L2HAL_SSD1683_ContextStruct *context)
  */
 void L2HAL_SSD1683_SetPosition(L2HAL_SSD1683_ContextStruct *context, uint16_t x, uint16_t y)
 {
-	uint8_t byteData;
 	L2HAL_SSD1683_WriteCommand(context, 0x4E);
-	byteData = x >> 3;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, x >> 3);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x4F);
-	byteData = y & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-	byteData = (y >> 8) & 0x01;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, y & 0xFF);
+	L2HAL_SSD1683_WriteDataByte(context, (y >> 8) & 0x01);
 }
 
-void L2HAL_SSD1683_SetRange(L2HAL_SSD1683_ContextStruct *context, uint16_t xStart,uint16_t yStart,uint16_t xEnd,uint16_t yEnd)
+void L2HAL_SSD1683_SetRange(L2HAL_SSD1683_ContextStruct *context, uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
-	uint8_t byteData;
-	L2HAL_SSD1683_WriteCommand(context, 0x44); /* X start - X end */
+	L2HAL_SSD1683_WriteCommand(context, 0x11); // set ram entry mode
+	L2HAL_SSD1683_WriteDataByte(context, 0x03);    // x increase, y increase : normal mode
 
-	byteData = (xStart >> 3) & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteCommand(context, 0x44);
+	L2HAL_SSD1683_WriteDataByte(context, x / 8);
+	L2HAL_SSD1683_WriteDataByte(context, (x + width - 1) / 8);
 
-	byteData = (xEnd>>3) & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteCommand(context, 0x45);
+	L2HAL_SSD1683_WriteDataByte(context, y % 256);
+	L2HAL_SSD1683_WriteDataByte(context, y / 256);
+	L2HAL_SSD1683_WriteDataByte(context, (y + height - 1) % 256);
+	L2HAL_SSD1683_WriteDataByte(context, (y + height - 1) / 256);
 
-	L2HAL_SSD1683_WriteCommand(context, 0x45); /* Y start - Y end */
+	L2HAL_SSD1683_WriteCommand(context, 0x4E);
+	L2HAL_SSD1683_WriteDataByte(context, x / 8);
 
-	byteData = yStart & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	byteData = (yStart >> 8) & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	byteData = yEnd & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
-
-	byteData = (yEnd >> 8) & 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteCommand(context, 0x4F);
+	L2HAL_SSD1683_WriteDataByte(context, y % 256);
+	L2HAL_SSD1683_WriteDataByte(context, y / 256);
 }
 
 void L2HAL_SSD1683_Update(L2HAL_SSD1683_ContextStruct *context)
 {
-	uint8_t byteData;
-
 	L2HAL_SSD1683_WriteCommand(context, 0x22);
-	byteData = 0xF7;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, 0xF7);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x20);
 
@@ -253,11 +252,8 @@ void L2HAL_SSD1683_Update(L2HAL_SSD1683_ContextStruct *context)
  */
 void L2HAL_SSD1683_WeakUpdate(L2HAL_SSD1683_ContextStruct *context)
 {
-	uint8_t byteData;
-
 	L2HAL_SSD1683_WriteCommand(context, 0x22);
-	byteData = 0xFF;
-	L2HAL_SSD1683_WriteData(context, &byteData, 1);
+	L2HAL_SSD1683_WriteDataByte(context, 0xFF);
 
 	L2HAL_SSD1683_WriteCommand(context, 0x20);
 
@@ -310,20 +306,27 @@ void L2HAL_SSD1683_ClearFramebuffer(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_PushFramebuffer(L2HAL_SSD1683_ContextStruct* context)
 {
-	for (uint16_t y = 0; y < L2HAL_SSD1683_DISPLAY_HEIGHT; y ++)
-	{
-		L2HAL_SSD1683_SetPosition(context, 0, y);
+	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_WriteCommand(context, 0x26);
+	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
 
-		 /* RED */
-		L2HAL_SSD1683_WriteCommand(context, 0x26);
-		L2HAL_SSD1683_WriteData(context, &context->Framebuffer[y * L2HAL_SSD1683_DISPLAY_LINE_SIZE], L2HAL_SSD1683_DISPLAY_LINE_SIZE);
-
-		/* Black */
-		L2HAL_SSD1683_WriteCommand(context, 0x24);
-		L2HAL_SSD1683_WriteData(context, &context->Framebuffer[y * L2HAL_SSD1683_DISPLAY_LINE_SIZE], L2HAL_SSD1683_DISPLAY_LINE_SIZE);
-	}
+	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_WriteCommand(context, 0x24);
+	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
 
 	L2HAL_SSD1683_Update(context);
+}
+
+/**
+ * Push framebuffer to display (partial update)
+ */
+void L2HAL_SSD1683_PushFramebufferPartial(L2HAL_SSD1683_ContextStruct* context)
+{
+	L2HAL_SSD1683_SetRange(context, 0, 0, L2HAL_SSD1683_DISPLAY_WIDTH, L2HAL_SSD1683_DISPLAY_HEIGHT);
+	L2HAL_SSD1683_WriteCommand(context, 0x24);
+	L2HAL_SSD1683_WriteData(context, context->Framebuffer, L2HAL_SSD1683_DISPLAY_LINE_SIZE * L2HAL_SSD1683_DISPLAY_HEIGHT);
+
+	L2HAL_SSD1683_WeakUpdate(context);
 }
 
 /**

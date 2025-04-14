@@ -51,11 +51,4 @@ system/src/stm32f4-hal/%.o: ../system/src/stm32f4-hal/%.c system/src/stm32f4-hal
 	@echo 'Finished building: $<'
 	@echo ' '
 
-system/src/stm32f4-hal/stm32f4xx_hal_dma.o: ../system/src/stm32f4-hal/stm32f4xx_hal_dma.c system/src/stm32f4-hal/subdir.mk
-	@echo 'Building file: $<'
-	@echo 'Invoking: GNU Arm Cross C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -flto -Wall -Wextra -g -DNDEBUG -DSTM32F401xC -DUSE_HAL_DRIVER -DHSE_VALUE=25000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4-hal" -std=gnu11 -Wno-unused-parameter -Wno-conversion -Wno-sign-conversion -Wno-bad-function-cast -Wno-unused-variable -Wno-implicit-function-declaration -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
-	@echo 'Finished building: $<'
-	@echo ' '
-
 
