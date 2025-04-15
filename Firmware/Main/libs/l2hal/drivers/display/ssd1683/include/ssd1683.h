@@ -69,6 +69,22 @@ typedef struct
 	 * Local framebuffer
 	 */
 	uint8_t Framebuffer[L2HAL_SSD1683_FRAMEBUFFER_SIZE];
+
+	/**
+	 * If set to true, then driver will perform full refreshs each AutoFullRefreshFramesCount
+	 * Applied for L2HAL_SSD1683_PushFramebufferPartial()
+	 */
+	bool IsAutoFullRefresh;
+
+	/**
+	 * Do full refresh every this frames count if IsAutoFullRefresh == true
+	 */
+	uint8_t AutoFullRefreshFramesCount;
+
+	/**
+	 * Do full refresh when this variable == 0
+	 */
+	uint8_t FramesTillFullRefresh;
 }
 L2HAL_SSD1683_ContextStruct;
 
@@ -92,7 +108,11 @@ void L2HAL_SSD1683_Init
 	GPIO_TypeDef* chipSelectPort,
 	uint16_t chipSelectPin,
 
-	FMGL_API_ColorStruct initColor
+	FMGL_API_ColorStruct initColor,
+
+	bool isAutoFullRefresh,
+
+	uint8_t autoFullRefreshFramesCount
 );
 
 /**

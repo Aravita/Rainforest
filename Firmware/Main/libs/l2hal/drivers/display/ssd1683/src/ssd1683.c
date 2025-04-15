@@ -25,7 +25,11 @@ void L2HAL_SSD1683_Init
 	GPIO_TypeDef* chipSelectPort,
 	uint16_t chipSelectPin,
 
-	FMGL_API_ColorStruct initColor
+	FMGL_API_ColorStruct initColor,
+
+	bool isAutoFullRefresh,
+
+	uint8_t autoFullRefreshFramesCount
 )
 {
 	context->SPIHandle = spiHandle;
@@ -43,6 +47,11 @@ void L2HAL_SSD1683_Init
 	context->ChipSelectPin = chipSelectPin;
 
 	context->IsDataTransferInProgress = true;
+
+	/* Auto full refresh */
+	context->IsAutoFullRefresh = isAutoFullRefresh;
+	context->AutoFullRefreshFramesCount = autoFullRefreshFramesCount;
+	context->FramesTillFullRefresh = autoFullRefreshFramesCount - 1;
 
 	L2HAL_SSD1683_ResetDisplay(context);
 
@@ -291,9 +300,27 @@ void L2HAL_SSD1683_PushFramebufferFull(L2HAL_SSD1683_ContextStruct* context)
  */
 void L2HAL_SSD1683_PushFramebufferPartial(L2HAL_SSD1683_ContextStruct* context)
 {
-	L2HAL_SSD1683_PushFramebufferInternal(context, 0x24);
+	if (context->IsAutoFullRefresh)
+	{
+		if (context->FramesTillFullRefresh > 0)
+		{
+			context->FramesTillFullRefresh --;
 
-	L2HAL_SSD1683_PartialUpdate(context);
+			L2HAL_SSD1683_PushFramebufferInternal(context, 0x24);
+			L2HAL_SSD1683_PartialUpdate(context);
+		}
+		else
+		{
+			context->FramesTillFullRefresh = context->AutoFullRefreshFramesCount - 1;
+
+			L2HAL_SSD1683_PushFramebufferFull(context);
+		}
+	}
+	else
+	{
+		L2HAL_SSD1683_PushFramebufferInternal(context, 0x24);
+		L2HAL_SSD1683_PartialUpdate(context);
+	}
 }
 
 /**

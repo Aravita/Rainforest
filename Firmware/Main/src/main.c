@@ -414,7 +414,10 @@ int main(int argc, char* argv[])
 		HAL_DISPLAY_CS_PORT,
 		HAL_DISPLAY_CS_PIN,
 
-		OffColor
+		OffColor,
+
+		false, /* Do periodic full refresh? */
+		3 /* Do periodic full refresh each this frames count */
 	);
 
 	/* Hardware self-test */
