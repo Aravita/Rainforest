@@ -38,7 +38,8 @@ FMGL_API_DriverContext FMGL_API_AttachToDriver
 	void (*drawPixel) (void* deviceContext, uint16_t x, uint16_t y),
 	FMGL_API_ColorStruct (*getPixel) (void* deviceContext, uint16_t x, uint16_t y),
 	void (*pushFramebuffer) (void* deviceContext),
-	FMGL_API_ColorStruct blankingColor
+	FMGL_API_ColorStruct blankingColor,
+	void (*clearFramebuffer) (void* deviceContext, FMGL_API_ColorStruct blankingColor)
 )
 {
 	FMGL_API_DriverContext context;
@@ -50,6 +51,7 @@ FMGL_API_DriverContext FMGL_API_AttachToDriver
 	context.DrawPixel = drawPixel;
 	context.GetPixel = getPixel;
 	context.PushFramebuffer = pushFramebuffer;
+	context.ClearFramebuffer = clearFramebuffer;
 
 	/* Maximal coordinates */
 	context.MaxX = context.GetWidth() - 1;
@@ -343,7 +345,15 @@ void FMGL_API_FillScreen(FMGL_API_DriverContext* context, FMGL_API_ColorStruct c
 
 void FMGL_API_ClearScreen(FMGL_API_DriverContext* context)
 {
-	FMGL_API_FillScreen(context, context->BlankingColor);
+	if (NULL != context->ClearFramebuffer)
+	{
+		context->ClearFramebuffer(context->DeviceContext, context->BlankingColor);
+	}
+	else
+	{
+		FMGL_API_FillScreen(context, context->BlankingColor);
+	}
+
 }
 
 void FMGL_API_RenderOneLineDumb(FMGL_API_DriverContext* context, FMGL_API_FontSettings* fontSettings, uint16_t x, uint16_t y, uint16_t* width,

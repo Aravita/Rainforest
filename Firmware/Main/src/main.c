@@ -433,7 +433,9 @@ int main(int argc, char* argv[])
 		(void (*) (void* deviceContext, uint16_t x, uint16_t y))&L2HAL_SSD1683_DrawPixel,
 		(FMGL_API_ColorStruct (*) (void* deviceContext, uint16_t x, uint16_t y))&L2HAL_SSD1683_GetPixel,
 		(void (*) (void* deviceContext))&L2HAL_SSD1683_PushFramebufferPartial,
-		OffColor
+
+		OffColor, /* Blanking color */
+		(void (*)(void *, FMGL_API_ColorStruct))&L2HAL_SSD1683_ClearFramebuffer /* Blanking method */
 	);
 
 	FMGL_API_FontSettings font;
@@ -459,17 +461,20 @@ int main(int argc, char* argv[])
 	tamga.Raster = tamga_bits;
 
 	/* Frame 1 */
-	L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 0, 0, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 0, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
 	/* Frame 2*/
-	L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 200, 0, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 100000, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
 	/* Frame 3*/
-	L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
+	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 100, 150, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 200000, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 

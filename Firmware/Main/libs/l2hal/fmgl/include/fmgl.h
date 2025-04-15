@@ -163,6 +163,11 @@ typedef struct
 	void (*PushFramebuffer) (void* deviceContext);
 
 	/**
+	 * Pointer to fast clear framebuffer function. May be null
+	 */
+	void (*ClearFramebuffer) (void* deviceContext, FMGL_API_ColorStruct blankingColor);
+
+	/**
 	 * Maximal possible X coordinate (rightest).
 	 */
 	uint16_t MaxX;
@@ -287,7 +292,8 @@ FMGL_API_DriverContext FMGL_API_AttachToDriver
 	void (*drawPixel) (void* deviceContext, uint16_t x, uint16_t y),
 	FMGL_API_ColorStruct (*getPixel) (void* deviceContext, uint16_t x, uint16_t y),
 	void (*pushFramebuffer) (void* deviceContext),
-	FMGL_API_ColorStruct blankingColor
+	FMGL_API_ColorStruct blankingColor,
+	void (*clearFramebuffer) (void* deviceContext, FMGL_API_ColorStruct blankingColor)
 );
 
 /***************************
