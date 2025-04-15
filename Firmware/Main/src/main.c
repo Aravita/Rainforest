@@ -59,7 +59,7 @@
 FMGL_API_ColorStruct OffColor = { .R = FMGL_API_MAX_CHANNEL_BRIGHTNESS, .G = FMGL_API_MAX_CHANNEL_BRIGHTNESS, .B = FMGL_API_MAX_CHANNEL_BRIGHTNESS };
 FMGL_API_ColorStruct OnColor = { .R = 0x00, .G = 0x00, .B = 0x00 };
 
-static unsigned char tamga_bits[] = {
+/*static unsigned char tamga_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -372,7 +372,7 @@ static unsigned char tamga_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-   0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };*/
 
 int main(int argc, char* argv[])
 {
@@ -439,7 +439,7 @@ int main(int argc, char* argv[])
 	);
 
 	FMGL_API_FontSettings font;
-	FMGL_API_Font fontData= FMGL_FontTerminusRegular12Init();
+	FMGL_API_Font fontData= FMGL_FontZapCyrillic32Init();
 	FMGL_API_XBMTransparencyMode transparencyMode = FMGL_XBMTransparencyModeNormal;
 
 	/* Font settings */
@@ -454,25 +454,27 @@ int main(int argc, char* argv[])
 	uint16_t width;
 	uint16_t height;
 
-	//FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, "4.2 \xC4\xC0\xCA\xCD\xCF\xD7\xD9\xCA E-Ink \xC4\xC9\xD3\xD0\xCC\xC5\xCA, \xCB\xC1\xC4\xD2 1");
-	FMGL_API_XBMImage tamga;
+	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#");
+	FMGL_API_PushFramebuffer(&FmglContext);
+
+	/*FMGL_API_XBMImage tamga;
 	tamga.Width = 200;
 	tamga.Height = 150;
-	tamga.Raster = tamga_bits;
+	tamga.Raster = tamga_bits;*/
 
-	/* Frame 1 */
+	/* Frame 1
 	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
 	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 0, 0, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 0, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
-	/* Frame 2*/
+	 Frame 2
 	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
 	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 200, 0, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
 	L2HAL_SSD1683_SaveFramebuffer(&DisplayContext, &RamContext, 100000, (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryWrite);
 
-	/* Frame 3*/
+	 Frame 3
 	//L2HAL_SSD1683_ClearFramebuffer(&DisplayContext, OffColor);
 	FMGL_API_ClearScreen(&FmglContext);
 	FMGL_API_RenderXBM(&FmglContext, &tamga, 100, 150, 1, 1, OnColor, OffColor, FMGL_XBMTransparencyModeNormal);
@@ -488,6 +490,11 @@ int main(int argc, char* argv[])
 			L2HAL_SSD1683_LoadFramebuffer(&DisplayContext, &RamContext, addresses[frame], (void (*)(void *, uint32_t,  uint32_t,  uint8_t *))L2HAL_LY68L6400_MemoryRead);
 			FMGL_API_PushFramebuffer(&FmglContext);
 		}
+	}*/
+
+	while(true)
+	{
+
 	}
 }
 

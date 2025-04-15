@@ -33,7 +33,8 @@
 #include "include/l2hal.h"
 #include "include/l2hal_aux.h"
 #include "fmgl/include/fmgl.h"
-#include "fmgl/fonts/include/terminusRegular12.h"
+//#include "fmgl/fonts/include/terminusRegular12.h"
+#include "fmgl/fonts/include/zap-cyrillic-vga32.h"
 
 /* Drivers */
 #include "drivers/input/buttons/include/l2hal_buttons_defaults.h"
