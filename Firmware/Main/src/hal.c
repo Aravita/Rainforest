@@ -88,7 +88,8 @@ void HAL_SetInfoLedState(bool isLit)
 
 void HAL_HardwareSelfTest(void)
 {
-	HAL_PSRAMSelfTest();
+	// TODO: Uncomment me
+	//HAL_PSRAMSelfTest();
 }
 
 void HAL_PSRAMSelfTest(void)

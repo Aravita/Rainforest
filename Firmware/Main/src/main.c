@@ -439,7 +439,7 @@ int main(int argc, char* argv[])
 	);
 
 	FMGL_API_FontSettings font;
-	FMGL_API_Font fontData= FMGL_FontZapCyrillic32Init();
+	FMGL_API_Font fontData= FMGL_FontFreeSans32Init();
 	FMGL_API_XBMTransparencyMode transparencyMode = FMGL_XBMTransparencyModeNormal;
 
 	/* Font settings */
@@ -454,7 +454,7 @@ int main(int argc, char* argv[])
 	uint16_t width;
 	uint16_t height;
 
-	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#");
+	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#$%&'()*+,-./");
 	FMGL_API_PushFramebuffer(&FmglContext);
 
 	/*FMGL_API_XBMImage tamga;

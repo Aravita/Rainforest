@@ -4,16 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../libs/l2hal/fmgl/fonts/src/terminusRegular12.c \
-../libs/l2hal/fmgl/fonts/src/zap-cyrillic-vga32.c 
+../libs/l2hal/fmgl/fonts/src/FreeSans32.c \
+../libs/l2hal/fmgl/fonts/src/terminusRegular12.c 
 
 C_DEPS += \
-./libs/l2hal/fmgl/fonts/src/terminusRegular12.d \
-./libs/l2hal/fmgl/fonts/src/zap-cyrillic-vga32.d 
+./libs/l2hal/fmgl/fonts/src/FreeSans32.d \
+./libs/l2hal/fmgl/fonts/src/terminusRegular12.d 
 
 OBJS += \
-./libs/l2hal/fmgl/fonts/src/terminusRegular12.o \
-./libs/l2hal/fmgl/fonts/src/zap-cyrillic-vga32.o 
+./libs/l2hal/fmgl/fonts/src/FreeSans32.o \
+./libs/l2hal/fmgl/fonts/src/terminusRegular12.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
