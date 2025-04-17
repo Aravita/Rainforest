@@ -454,7 +454,8 @@ int main(int argc, char* argv[])
 	uint16_t width;
 	uint16_t height;
 
-	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#$%&'()*+,-./");
+	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#$%&'()*+,-./0123456789");
+	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 32, &width, &height, false, ":;<=>?");
 	FMGL_API_PushFramebuffer(&FmglContext);
 
 	/*FMGL_API_XBMImage tamga;
