@@ -39,6 +39,21 @@ static const uint8_t* FMGL_FontFreeSans32Characters[FMGL_FONT_FREESANS_32_CHARAC
 	FMGL_FontFreeSans32Characters_Semicolon,
 	FMGL_FontFreeSans32Characters_Less,
 	FMGL_FontFreeSans32Characters_Equal,
+	FMGL_FontFreeSans32Characters_Greater,
+	FMGL_FontFreeSans32Characters_Question,
+	FMGL_FontFreeSans32Characters_At,
+	FMGL_FontFreeSans32Characters_A,
+	FMGL_FontFreeSans32Characters_B,
+	FMGL_FontFreeSans32Characters_C,
+	FMGL_FontFreeSans32Characters_D,
+	FMGL_FontFreeSans32Characters_E,
+	FMGL_FontFreeSans32Characters_F,
+	FMGL_FontFreeSans32Characters_G,
+	FMGL_FontFreeSans32Characters_H,
+	FMGL_FontFreeSans32Characters_I,
+	FMGL_FontFreeSans32Characters_J,
+	FMGL_FontFreeSans32Characters_K,
+	FMGL_FontFreeSans32Characters_L,
 };
 
 uint16_t FMGL_FontFreeSans32GetCharacterWidth (uint8_t character)
@@ -59,17 +74,6 @@ const uint8_t* FMGL_FontFreeSans32GetCharacterRaster(uint8_t character)
 	}
 
 	return FMGL_FontFreeSans32Characters[character - FMGL_FONT_FREESANS_32_FIRST_CHARACTER_CODE];
-
-	/*switch (character)
-	{
-		case 0x20: return FMGL_FontFreeSans32Characters_Space;
-		case 0x21: return FMGL_FontFreeSans32Characters_Exclam;
-		case 0x22: return FMGL_FontFreeSans32Characters_DoubleQuote;
-		case 0x23: return FMGL_FontFreeSans32Characters_Numbersign;
-		case 0x24: return FMGL_FontFreeSans32Characters_Dollar;
-
-		default: return FMGL_FontFreeSans32CharactersWrong;
-	}*/
 }
 
 FMGL_API_Font FMGL_FontFreeSans32Init(void)
