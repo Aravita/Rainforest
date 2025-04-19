@@ -54,6 +54,9 @@ static const uint8_t* FMGL_FontFreeSans32Characters[FMGL_FONT_FREESANS_32_CHARAC
 	FMGL_FontFreeSans32Characters_J,
 	FMGL_FontFreeSans32Characters_K,
 	FMGL_FontFreeSans32Characters_L,
+	FMGL_FontFreeSans32Characters_M,
+	FMGL_FontFreeSans32Characters_N,
+	FMGL_FontFreeSans32Characters_O,
 };
 
 uint16_t FMGL_FontFreeSans32GetCharacterWidth (uint8_t character)
