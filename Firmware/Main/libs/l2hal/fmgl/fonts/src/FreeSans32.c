@@ -57,6 +57,22 @@ static const uint8_t* FMGL_FontFreeSans32Characters[FMGL_FONT_FREESANS_32_CHARAC
 	FMGL_FontFreeSans32Characters_M,
 	FMGL_FontFreeSans32Characters_N,
 	FMGL_FontFreeSans32Characters_O,
+	FMGL_FontFreeSans32Characters_P,
+	FMGL_FontFreeSans32Characters_Q,
+	FMGL_FontFreeSans32Characters_R,
+	FMGL_FontFreeSans32Characters_S,
+	FMGL_FontFreeSans32Characters_T,
+	FMGL_FontFreeSans32Characters_U,
+	FMGL_FontFreeSans32Characters_V,
+	FMGL_FontFreeSans32Characters_W,
+	FMGL_FontFreeSans32Characters_X,
+	FMGL_FontFreeSans32Characters_Y,
+	FMGL_FontFreeSans32Characters_Z,
+	FMGL_FontFreeSans32Characters_BracketLeft,
+	FMGL_FontFreeSans32Characters_Backslash,
+	FMGL_FontFreeSans32Characters_BracketRight,
+	FMGL_FontFreeSans32Characters_Circumflex,
+	FMGL_FontFreeSans32Characters_LowLine,
 };
 
 uint16_t FMGL_FontFreeSans32GetCharacterWidth (uint8_t character)

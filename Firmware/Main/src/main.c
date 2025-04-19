@@ -456,7 +456,7 @@ int main(int argc, char* argv[])
 
 	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 0, &width, &height, false, " !\"#$%&'()*+,-./0123456789");
 	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 32, &width, &height, false, ":;<=>?@ABCDEFGHIJKLM");
-	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 64, &width, &height, false, "NOPQRSTUVWXYZ");
+	FMGL_API_RenderTextWithLineBreaks(&FmglContext, &font, 0, 64, &width, &height, false, "NOPQRSTUVWXYZ[\\]^_");
 	FMGL_API_PushFramebuffer(&FmglContext);
 
 	/*FMGL_API_XBMImage tamga;
