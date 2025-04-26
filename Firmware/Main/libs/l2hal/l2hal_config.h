@@ -38,6 +38,8 @@
 #include "drivers/internal/crc/include/l2hal_crc.h"
 #include "drivers/ram/ly68l6400/include/l2hal_ly68l6400.h"
 #include "drivers/display/ssd1683/include/ssd1683.h"
+#include "drivers/sdcard/include/l2hal_sdcard.h"
+
 #include "fmgl/fonts/include/FreeSans32.h"
 
 

@@ -420,6 +420,25 @@ int main(int argc, char* argv[])
 		3 /* Do periodic full refresh each this frames count */
 	);
 
+	/* SD Card driver initialization */
+	enum L2HAL_SDCard_InitResult sdCardInitResult = L2HAL_SDCard_Init
+	(
+		&SDCardContext,
+		&SPI1Handle,
+
+		HAL_SDCARD_CS_PORT,
+		HAL_SDCARD_CS_PIN
+	);
+
+	if (NoCardInserted == sdCardInitResult)
+	{
+		L2HAL_Error(Generic); /* TODO: Show "Insert SD-card" message */
+	}
+	else if (Success != sdCardInitResult)
+	{
+		L2HAL_Error(Generic); /* Failed to initialize SD-card */
+	}
+
 	/* Hardware self-test */
 	HAL_HardwareSelfTest();
 

@@ -31,6 +31,17 @@
 #define HAL_PSRAM_TEST_BLINK_BLOCKS_HALF_COUNT 512
 
 /**********************
+ *  SD CARD *
+ *
+ *  SPI 1
+ *  PB5 - CS (Active 0)
+ *
+ **********************/
+
+#define HAL_SDCARD_CS_PIN GPIO_PIN_5
+#define HAL_SDCARD_CS_PORT GPIOB
+
+/**********************
  *  Display - SSD1683 *
  *
  *  SPI 2

@@ -19,6 +19,8 @@ void DMA2_Stream3_IRQHandler(void)
 	HAL_DMA_IRQHandler(SPI1Handle.hdmatx);
 
 	L2HAL_PSRAMDmaCompleted(SPI1Handle.hdmatx);
+
+	L2HAL_SDCardDmaCompleted(SPI1Handle.hdmatx);
 }
 
 /* SPI1 DMA RX complete */
@@ -27,6 +29,8 @@ void DMA2_Stream2_IRQHandler(void)
 	HAL_DMA_IRQHandler(SPI1Handle.hdmarx);
 
 	L2HAL_PSRAMDmaCompleted(SPI1Handle.hdmatx);
+
+	L2HAL_SDCardDmaCompleted(SPI1Handle.hdmatx);
 }
 
 /* SPI2 DMA TX complete */

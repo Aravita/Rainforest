@@ -52,12 +52,19 @@ DMA_HandleTypeDef SPI2RxDmaHandle = { 0 };
  */
 L2HAL_LY68L6400_ContextStruct RamContext;
 
-/* Display context */
+/**
+ *  Display context
+ */
 L2HAL_SSD1683_ContextStruct DisplayContext;
 
 /**
  * FMGL context.
  */
 FMGL_API_DriverContext FmglContext;
+
+/**
+ * SD-card context
+ */
+L2HAL_SDCard_ContextStruct SDCardContext;
 
 #endif /* INCLUDE_GLOBAL_VARIABLES_H_ */

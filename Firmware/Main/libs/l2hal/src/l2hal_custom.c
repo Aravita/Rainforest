@@ -267,3 +267,7 @@ void L2HAL_DisplayDmaCompleted(DMA_HandleTypeDef *hdma)
 	L2HAL_SSD1683_MarkDataTransferAsCompleted(&DisplayContext);
 }
 
+void L2HAL_SDCardDmaCompleted(DMA_HandleTypeDef *hdma)
+{
+	L2HAL_SDCard_MarkDataTransferAsCompleted(&SDCardContext);
+}
